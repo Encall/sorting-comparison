@@ -2,9 +2,6 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/resource.h>
-#include <sys/time.h>
-
 
 void bubbleSort(unsigned int *arr, int n)
 {
@@ -22,9 +19,8 @@ void bubbleSort(unsigned int *arr, int n)
     }
 }
 
-int main(int argc, char *argv[]){
-    struct timeval start, end;
-    struct rusage usage;
+int main(int argc, char *argv[])
+{
     FILE *fp = fopen(argv[1], "r");
     if (fp == NULL)
     {
@@ -39,20 +35,20 @@ int main(int argc, char *argv[]){
     {
         fscanf(fp, "%u", &arr[j]);
     }
-    getrusage(RUSAGE_SELF, &usage);
-    start = usage.ru_utime;
+    clock_t start = clock();
     bubbleSort(arr, n);
-    getrusage(RUSAGE_SELF, &usage);
-    end = usage.ru_utime;
-    double time_taken = ((double)(end.tv_sec - start.tv_sec)) + ( ((double)(end.tv_usec - start.tv_usec)) / 1000000.00);
-    char *baseFilename = "output_";
+    clock_t end = clock();
+    double time_taken = ((double)(end - start)) / CLOCKS_PER_SEC; // in seconds
+    char *baseFilename = "output_bubbleSort_";
     char *newFilename = malloc(strlen(baseFilename) + strlen(argv[1]) + 1);
-    if(newFilename == NULL) {
+    if (newFilename == NULL)
+    {
         printf("Memory allocation failed\n");
         return 1; // or handle error as you wish
     }
     strcpy(newFilename, baseFilename);
     strcat(newFilename, argv[1]);
+
     // Remove path from name
     char *substring = "./../dataset/";
     char *found = strstr(newFilename, substring);
@@ -67,9 +63,9 @@ int main(int argc, char *argv[]){
         printf("Could not open file %s\n", newFilename);
         return 1; // or handle error as you wish
     }
-    
+
     fprintf(res, "%lf\n", time_taken * 1000); // convert to milliseconds
-    
+
     fclose(res);
     fclose(fp);
     free(newFilename);
