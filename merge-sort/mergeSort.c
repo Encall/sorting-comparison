@@ -41,6 +41,8 @@ void merge(unsigned int* arr, int l, int r, int mid){
     for (i =0;i<(r-l)+1;i++){
         arr[l+i] = newArr[i];
     }
+
+    free(newArr);
 }
 
 void mergeSort(unsigned int* arr, int l, int r){
